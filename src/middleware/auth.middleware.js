@@ -1,17 +1,26 @@
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-// Protect routes middleware
-const authMiddleware = (req,res,next)=>{
-    const token = req.query.token
-    if(!token){
-        return res.status(401).json({message:"Token missing"})
+const authMiddleware = (req, res, next) => {
+  try {
+  
+    const authHeader = req.header("Authorization");
+
+    if (!authHeader) {
+      return res.status(401).json({ message: "Token missing" });
     }
-    try {
-        const decoded = jwt.verify(token,process.env.JWT_SECRET)
-        req.user = decoded;
-    } catch (error) {
-    return res.status(401).json({message:"Invalid or Expired Token"})    
-    }
-}
+
+    
+    const token = authHeader.replace("Bearer ", "");
+
+   
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+};
 
 module.exports = authMiddleware;
