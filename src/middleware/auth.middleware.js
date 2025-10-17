@@ -12,6 +12,8 @@ const authMiddleware = (req, res, next) => {
 
     
     const token = authHeader.replace("Bearer ", "");
+    console.log("toekn",token);
+    
 
    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

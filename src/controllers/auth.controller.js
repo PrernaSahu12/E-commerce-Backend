@@ -50,3 +50,31 @@ exports.login = async (req, res) => {
     res.status(500).json({ msg: "Server Error", error: err.message });
   }
 };
+
+
+// controllers/user.controller.js
+
+
+exports.getProfile = async (req, res) => {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ success: false, msg: "Unauthorized" });
+    }
+
+    // Find user from DB using id from JWT
+    const user = await User.findById(req.user.id).select("-password"); // exclude password
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user, // full user object without password
+    });
+  } catch (err) {
+    console.error("Error fetching profile:", err);
+    res.status(500).json({ success: false, msg: "Server Error" });
+  }
+};
+
+

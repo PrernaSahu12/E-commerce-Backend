@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const path = require("path");
 dotenv.config();
 const cors = require("cors");
 const express = require("express");
@@ -30,7 +31,7 @@ app.use(express.json());
 
 connectDB();
 
-
+app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);

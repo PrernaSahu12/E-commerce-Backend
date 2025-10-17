@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const razorpay = require("../config/razorpay");
 
 const orderSchema = new mongoose.Schema(
   {
@@ -26,6 +25,11 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    shippingAddress: {
+      type: String,
+      required: true,
+      default: "Default Address",
+    },
     paymentInfo: {
       razorpay_order_id: { type: String },
       razorpay_payment_id: { type: String },
@@ -48,4 +52,5 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 module.exports = mongoose.model("Order", orderSchema);

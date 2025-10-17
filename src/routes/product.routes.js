@@ -1,31 +1,47 @@
 const express = require("express")
 const Product = require("../models/Product")
 const authMiddleware = require("../middleware/auth.middleware")
+const upload = require('../middleware/upload.middleware')
 const router = express.Router()
 
 
 // Create Product (Admin Only)
-router.post("/",authMiddleware, async(req,res)=>{
-  try {
-    const {name, description, price, category, stock, images} = req.body
-    // only admin check(assuming user.role exists)
-    if(req.user.role !== "admin"){
-      return res.status(403).json({message:"Access denied"})
+router.post(
+  "/",
+  authMiddleware,
+  upload.array("images", 5), // multiple images, max 5
+  async (req, res) => {
+    try {
+      const { name, description, price, category, stock } = req.body;
+
+      // Admin check
+      if (req.user.role !== "admin") {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Convert price/stock to numbers
+      const productData = {
+        name,
+        description,
+        price: Number(price),
+        category,
+        stock: Number(stock),
+        createdBy: req.user.id,
+        images: req.files.map(file => ({
+          url: `/uploads/${file.filename}`,
+          public_id: file.filename
+        }))
+      };
+
+      const newProduct = await Product.create(productData);
+
+      res.status(201).json(newProduct);
+    } catch (error) {
+      console.error("Product creation error:", error);
+      res.status(500).json({ message: error.message });
     }
-    const product = await Product.create({
-      name,
-      description,
-      stock,
-      images,
-      price,
-      category,
-      createdBy:req.user.id,
-    })
-    res.status(201).json(product)
-  } catch (error) {
-    res.status(500).json({message:error.message})
   }
-})
+);
 // Get All Products
 router.get("/", async(req,res)=>{
   try {
