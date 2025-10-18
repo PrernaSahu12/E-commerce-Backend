@@ -21,9 +21,6 @@ const allowedOrigins = [
   "https://e-commerce-frontend-sqhs.vercel.app"
 ].filter(Boolean);
 
-app.use("/",(req,res)=>{
-  console.log("hello")
-})
 
 
 app.use((req, res, next) => {
