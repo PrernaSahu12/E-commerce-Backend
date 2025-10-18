@@ -12,15 +12,11 @@ const orderRoutes = require("./src/routes/order.Routes");
 
 const app = express();
 
-
-
-
 const allowedOrigins = [
   process.env.CLIENT_URL, 
   "http://localhost:5173",
   "https://e-commerce-frontend-sqhs.vercel.app"
 ].filter(Boolean);
-
 
 
 app.use((req, res, next) => {
