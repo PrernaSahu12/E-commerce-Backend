@@ -13,18 +13,34 @@ const orderRoutes = require("./src/routes/order.Routes");
 const app = express();
 
 
-const allowedOrigins = [process.env.CLIENT_URL || "http://localhost:5173"];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-    return callback(new Error('CORS policy: This origin is not allowed'));
-  },
-  credentials: true,
-}));
+
+const allowedOrigins = [
+  process.env.CLIENT_URL, 
+  "http://localhost:5173",
+  "https://e-commerce-frontend-sqhs.vercel.app"
+].filter(Boolean);
+
+app.use("/",(req,res)=>{
+  console.log("hello")
+})
+
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (!origin) {
+    // no origin (curl, server-to-server) - allow
+    res.header("Access-Control-Allow-Origin", "*");
+  } else if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Credentials", "true");
+  // Handle preflight
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
 
 
 app.use(express.json());
@@ -38,4 +54,6 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running pn port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running or port ${PORT}`));
+
+
