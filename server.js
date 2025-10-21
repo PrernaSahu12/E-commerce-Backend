@@ -14,27 +14,26 @@ const app = express();
 
 // Allowed frontend origins
 const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "http://localhost:5173",
+  "https://e-commerce-frontend-gamma-lemon.vercel.app",
   "https://e-commerce-frontend-sqhs.vercel.app",
-  "https://e-commerce-frontend-gamma-lemon.vercel.app" 
-].filter(Boolean);
+  "http://localhost:5173"
+];
 
-// Use CORS middleware
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like curl, server-to-server)
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // curl or server-to-server
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
+      console.log("Blocked by CORS:", origin);
       return callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
+  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
+  allowedHeaders: ["Origin","X-Requested-With","Content-Type","Accept","Authorization"]
 }));
+
 
 // Parse JSON
 app.use(express.json());
