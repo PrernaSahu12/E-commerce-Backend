@@ -62,14 +62,14 @@ exports.getProfile = async (req, res) => {
     }
 
     // Find user from DB using id from JWT
-    const user = await User.findById(req.user.id).select("-password"); // exclude password
+    const user = await User.findById(req.user.id).select("-password"); 
     if (!user) {
       return res.status(404).json({ success: false, msg: "User not found" });
     }
 
     res.status(200).json({
       success: true,
-      user, // full user object without password
+      user, 
     });
   } catch (err) {
     console.error("Error fetching profile:", err);
